@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Alec RJ — I build things that work.</title>
+<meta name="description" content="The portfolio of Alec RJ. Designer, systems builder, and maker of software that feels like it belongs to you." />
+<meta name="theme-color" content="#0a0908" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Permanent+Marker&family=Press+Start+2P&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body data-phase="boot">
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     SVG filters / gradients
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<svg aria-hidden="true" class="svg-defs" width="0" height="0">
+  <defs>
+    <filter id="spraypaint" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" result="displaced"/>
+      <feGaussianBlur in="displaced" stdDeviation="0.35"/>
+    </filter>
+    <filter id="spray-heavy" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <filter id="spray-wet" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.35" numOctaves="2" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="14"/>
+    </filter>
+    <radialGradient id="paintOrange" cx="45%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#ff8a3d"/>
+      <stop offset="55%" stop-color="#e86a2a"/>
+      <stop offset="100%" stop-color="#b84515"/>
+    </radialGradient>
+    <linearGradient id="canMetal" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#5c5650"/>
+      <stop offset="15%" stop-color="#c9c5bc"/>
+      <stop offset="35%" stop-color="#eae6dc"/>
+      <stop offset="55%" stop-color="#a8a29a"/>
+      <stop offset="80%" stop-color="#c9c5bc"/>
+      <stop offset="100%" stop-color="#4a453f"/>
+    </linearGradient>
+    <linearGradient id="canLabel" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%"  stop-color="#1a1714"/>
+      <stop offset="100%" stop-color="#2a2420"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- Fixed overlays -->
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i></i></div>
+<div class="depth mono" aria-hidden="true"><span id="depth-pct">00</span><em>/100</em></div>
+<div class="cursor" aria-hidden="true">
+  <svg viewBox="0 0 32 52" class="cursor__brush">
+    <!-- handle -->
+    <rect x="13" y="0" width="6" height="26" rx="1" fill="#7a4a1f"/>
+    <rect x="13" y="0" width="6" height="26" rx="1" fill="url(#cursorWood)" opacity=".4"/>
+    <!-- ferrule -->
+    <rect x="11" y="26" width="10" height="7" fill="#c9c5bc"/>
+    <rect x="11" y="26" width="10" height="7" fill="url(#cursorMetal)" opacity=".5"/>
+    <!-- bristles -->
+    <path d="M 10 33 Q 9 44 13 50 Q 16 52 19 50 Q 23 44 22 33 Z" fill="#1a1a1a"/>
+    <!-- orange paint tip -->
+    <path d="M 12 47 Q 14 52 16 52 Q 18 52 20 47 Q 18 49 16 49 Q 14 49 12 47 Z" fill="#e86a2a"/>
+    <defs>
+      <linearGradient id="cursorWood" x1="0" x2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset=".5" stop-color="#000" stop-opacity=".5"/>
+        <stop offset="1" stop-color="#000" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="cursorMetal" x1="0" x2="1">
+        <stop offset="0" stop-color="#fff" stop-opacity=".1"/>
+        <stop offset=".5" stop-color="#fff" stop-opacity=".6"/>
+        <stop offset="1" stop-color="#fff" stop-opacity=".1"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+<div class="brush-layer" aria-hidden="true"></div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ NAV -->
+<header class="nav">
+  <a href="#hero" class="nav__mark" data-action="scroll-to" data-target="#hero" aria-label="Home">
+    <span class="nav__mark-box">A</span>
+    <span class="nav__mark-slash">/</span>
+    <span class="nav__mark-box">RJ</span>
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    <a href="#palette" data-action="scroll-to" data-target="#palette">Tools</a>
+    <a href="#palette" data-action="scroll-to" data-target="#palette">Apps</a>
+    <a href="#palette" data-action="scroll-to" data-target="#palette">Portfolio</a>
+    <a href="#contact" data-action="scroll-to" data-target="#contact" class="nav__contact">
+      <span>Get in touch</span> <i>↘</i>
+    </a>
+    <button class="nav__menu" data-action="menu-open" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MENU OVERLAY -->
+<aside class="menu" aria-hidden="true" id="menu">
+  <button class="menu__close" data-action="menu-close" aria-label="Close menu">✕</button>
+  <div class="menu__grid">
+    <ol class="menu__list">
+      <li><a href="#hero"     data-action="scroll-to" data-target="#hero"><span class="mono">00</span> Top</a></li>
+      <li><a href="#manifesto" data-action="scroll-to" data-target="#manifesto"><span class="mono">01</span> Manifesto</a></li>
+      <li><a href="#studio"   data-action="scroll-to" data-target="#studio"><span class="mono">02</span> The spray</a></li>
+      <li><a href="#about"    data-action="scroll-to" data-target="#about"><span class="mono">03</span> About</a></li>
+      <li><a href="#pixels"    data-action="scroll-to" data-target="#pixels"><span class="mono">04</span> Pixels → paintings</a></li>
+      <li><a href="#gallerist" data-action="scroll-to" data-target="#gallerist"><span class="mono">05</span> The exhibition</a></li>
+      <li><a href="#contact"   data-action="scroll-to" data-target="#contact"><span class="mono">06</span> Contact</a></li>
+    </ol>
+    <aside class="menu__side">
+      <p class="mono">elsewhere /</p>
+      <ul class="menu__social">
+        <li><a href="#" data-action="social" data-social="x">X &nbsp;→ @alecrj</a></li>
+        <li><a href="#" data-action="social" data-social="ig">Instagram &nbsp;→ @alecrj</a></li>
+        <li><a href="#" data-action="social" data-social="li">LinkedIn &nbsp;→ alecrj</a></li>
+        <li><a href="mailto:hi@alecrj.com" data-action="email">hi@alecrj.com</a></li>
+      </ul>
+      <p class="menu__whisper mono">
+        ⌃ press <kbd>M</kbd> to toggle · <kbd>Esc</kbd> to close · try <kbd>↑↑↓↓←→←→BA</kbd>
+      </p>
+    </aside>
+  </div>
+</aside>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ HERO -->
+<section class="hero" id="hero" data-parallax-section>
+  <div class="hero__wall hero__wall--back" data-parallax="0.25" aria-hidden="true"></div>
+  <div class="hero__wall hero__wall--mid"  data-parallax="0.55" aria-hidden="true"></div>
+  <div class="hero__wall hero__wall--cracks" data-parallax="0.8" aria-hidden="true"></div>
+
+  <span class="tape tape--tl"></span>
+  <span class="tape tape--br"></span>
+
+  <!-- Distressed poster slap in corner -->
+  <div class="poster" data-parallax="1.15" aria-hidden="true">
+    <span class="mono">WET PAINT</span>
+    <strong>ALEC/RJ</strong>
+    <span class="mono tiny">std.mmxxvi · nyc</span>
+  </div>
+
+  <div class="hero__tag">
+    <p class="hero__eyebrow mono"><i class="dot"></i> est. 2026 · portfolio of a builder</p>
+    <h1 class="spray" data-mouse-tilt aria-label="I design things that work">
+      <span class="spray__line"><span>I</span><span>&nbsp;</span><span>D</span><span>E</span><span>S</span><span>I</span><span>G</span><span>N</span></span>
+      <span class="spray__line"><span>T</span><span>H</span><span>I</span><span>N</span><span>G</span><span>S</span><span>&nbsp;</span><span>T</span><span>H</span><span>A</span><span>T</span></span>
+      <span class="spray__line spray__line--accent"><span class="drip-word"><span>W</span><span>O</span><span>R</span><span>K</span><span>.</span></span></span>
+    </h1>
+    <p class="hero__sig">— a portfolio by <em>Alec&nbsp;RJ</em> —</p>
+
+    <div class="hero__ctas">
+      <button class="btn btn--primary" data-action="scroll-to" data-target="#palette">
+        <span>See the work</span> <i>→</i>
+      </button>
+      <button class="btn btn--ghost" data-action="scroll-to" data-target="#contact">
+        <span>Work with me</span> <i>↘</i>
+      </button>
+    </div>
+  </div>
+
+  <div class="hero__cue">
+    <span>scroll</span>
+    <i class="cue-line"></i>
+  </div>
+
+  <!-- Tiny spray-can sprite in lower left -->
+  <div class="hero__can" aria-hidden="true">
+    <svg viewBox="0 0 40 90">
+      <rect x="14" y="0" width="12" height="5" rx="1" fill="#eae6dc"/>
+      <rect x="17" y="5" width="6" height="3" fill="#2a2420"/>
+      <rect x="6"  y="8" width="28" height="70" rx="3" fill="url(#canMetal)"/>
+      <rect x="10" y="22" width="20" height="40" fill="url(#canLabel)"/>
+      <rect x="6"  y="78" width="28" height="4" fill="#2a2420"/>
+    </svg>
+    <i class="hero__can-hiss"></i>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MANIFESTO (8-BIT ARCADE) -->
+<section class="bits" id="manifesto" data-parallax-section>
+  <div class="bits__wall" aria-hidden="true"></div>
+  <div class="bits__scanlines" aria-hidden="true"></div>
+
+  <!-- Parallax pixel-art sprites scattered across the wall -->
+  <svg class="bits__sprite bits__sprite--crown" data-parallax="0.45"
+       viewBox="0 0 7 4" aria-hidden="true">
+    <rect x="0" y="1" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/>
+    <rect x="1" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/>
+    <rect x="0" y="2" width="7" height="2"/>
+  </svg>
+
+  <svg class="bits__sprite bits__sprite--star" data-parallax="0.7"
+       viewBox="0 0 5 5" aria-hidden="true">
+    <rect x="2" y="0" width="1" height="1"/>
+    <rect x="0" y="1" width="5" height="1"/>
+    <rect x="1" y="2" width="3" height="1"/>
+    <rect x="0" y="3" width="2" height="1"/><rect x="3" y="3" width="2" height="1"/>
+    <rect x="0" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/>
+  </svg>
+
+  <svg class="bits__sprite bits__sprite--heart" data-parallax="0.35"
+       viewBox="0 0 7 6" aria-hidden="true">
+    <rect x="1" y="0" width="2" height="1"/><rect x="4" y="0" width="2" height="1"/>
+    <rect x="0" y="1" width="7" height="2"/>
+    <rect x="1" y="3" width="5" height="1"/>
+    <rect x="2" y="4" width="3" height="1"/>
+    <rect x="3" y="5" width="1" height="1"/>
+  </svg>
+
+  <svg class="bits__sprite bits__sprite--drop" data-parallax="0.85"
+       viewBox="0 0 3 5" aria-hidden="true">
+    <rect x="1" y="0" width="1" height="2"/>
+    <rect x="0" y="2" width="3" height="3"/>
+  </svg>
+
+  <svg class="bits__sprite bits__sprite--arrow" data-parallax="0.55"
+       viewBox="0 0 5 5" aria-hidden="true">
+    <rect x="0" y="2" width="3" height="1"/>
+    <rect x="2" y="1" width="1" height="3"/>
+    <rect x="3" y="0" width="1" height="5"/>
+    <rect x="4" y="2" width="1" height="1"/>
+  </svg>
+
+  <svg class="bits__sprite bits__sprite--block" data-parallax="0.25"
+       viewBox="0 0 4 4" aria-hidden="true">
+    <rect x="0" y="0" width="4" height="4"/>
+    <rect x="1" y="1" width="2" height="2" fill="#0a0908"/>
+  </svg>
+
+  <div class="bits__content">
+    <p class="bits__index mono"><span class="dot"></span> 01 / manifesto</p>
+
+    <h2 class="bits__title">
+      <span class="bits__blink">▶</span> DESIGN&nbsp;PROWESS
+    </h2>
+
+    <p class="bits__sub">THREE LAWS OF THE CRAFT</p>
+
+    <ol class="bits__list">
+      <li class="bits__row">
+        <span class="bits__num">01</span>
+        <div class="bits__row-body">
+          <strong>INEVITABILITY</strong>
+          <p>Good design looks like it could only have been this.</p>
+        </div>
+      </li>
+      <li class="bits__row">
+        <span class="bits__num">02</span>
+        <div class="bits__row-body">
+          <strong>TASTE</strong>
+          <p>Knowing what to leave out is the whole job.</p>
+        </div>
+      </li>
+      <li class="bits__row">
+        <span class="bits__num">03</span>
+        <div class="bits__row-body">
+          <strong>FRAME-WORTHY</strong>
+          <p>Ship only what you'd hang on a wall.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="bits__foot">
+      <span class="bits__blink">●</span> PRESS ANY KEY TO CONTINUE
+    </p>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ STUDIO: spray-can scene -->
+<section class="studio" id="studio">
+  <div class="studio__sticky">
+    <!-- Background wall -->
+    <div class="studio__wall" aria-hidden="true"></div>
+
+    <!-- Phase 1 caption -->
+    <div class="studio__caption" data-phase="1">
+      <p class="mono"><i class="dot"></i> 02 / the studio</p>
+      <h3>You pick up the can.</h3>
+    </div>
+
+    <!-- Phase 2 caption -->
+    <div class="studio__caption" data-phase="2">
+      <p class="mono"><i class="dot"></i> shake, shake, shake</p>
+      <h3>You find the colour.</h3>
+    </div>
+
+    <!-- Phase 3 caption -->
+    <div class="studio__caption" data-phase="3">
+      <p class="mono"><i class="dot"></i> press</p>
+      <h3>Everything else disappears.</h3>
+    </div>
+
+    <!-- The big spray can -->
+    <div class="bigcan" aria-hidden="true">
+      <svg viewBox="0 0 160 380" xmlns="http://www.w3.org/2000/svg">
+        <!-- cap -->
+        <rect x="56" y="0" width="48" height="18" rx="3" fill="url(#canMetal)"/>
+        <!-- nozzle -->
+        <rect x="68" y="18" width="24" height="12" fill="#2a2420"/>
+        <rect x="74" y="22" width="12" height="5" rx="1" fill="#b84515"/>
+        <!-- body -->
+        <rect x="20" y="30" width="120" height="320" rx="6" fill="url(#canMetal)"/>
+        <!-- label: widened + taller -->
+        <rect x="24" y="80" width="112" height="210" fill="url(#canLabel)"/>
+        <!-- Brand -->
+        <text x="80" y="130" text-anchor="middle" fill="#e86a2a"
+              font-family="Bungee, Impact, sans-serif" font-size="18" letter-spacing="0.5">
+          ALEC/RJ
+        </text>
+        <!-- Series -->
+        <text x="80" y="152" text-anchor="middle" fill="#e86a2a"
+              font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="2">
+          EST 2026
+        </text>
+        <!-- divider -->
+        <rect x="40" y="164" width="80" height="1.5" fill="#e86a2a"/>
+        <!-- Color code -->
+        <text x="80" y="192" text-anchor="middle" fill="#f1ebdd"
+              font-family="Bungee, Impact, sans-serif" font-size="16" letter-spacing="0.5">
+          #E86A2A
+        </text>
+        <!-- Finish -->
+        <text x="80" y="214" text-anchor="middle" fill="#c9c5bc"
+              font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="2">
+          HI-GLOSS
+        </text>
+        <text x="80" y="230" text-anchor="middle" fill="#c9c5bc"
+              font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="2">
+          400 ML
+        </text>
+        <!-- warning (smaller, shorter) -->
+        <text x="80" y="262" text-anchor="middle" fill="#c9c5bc"
+              font-family="JetBrains Mono, monospace" font-size="6" letter-spacing="1.5">
+          SHAKE BEFORE USE
+        </text>
+        <text x="80" y="276" text-anchor="middle" fill="#8a867e"
+              font-family="JetBrains Mono, monospace" font-size="5" letter-spacing="1.5">
+          NET WT · CONTENTS UNDER PRESSURE
+        </text>
+        <!-- base -->
+        <rect x="20" y="350" width="120" height="6" fill="#2a2420"/>
+        <!-- highlight -->
+        <rect x="26" y="30" width="6" height="320" fill="rgba(255,255,255,.25)"/>
+      </svg>
+    </div>
+
+    <!-- The dripping can (mirror, appears in phase 3) -->
+
+    <!-- Particles: positioned absolutely, animated by JS by scroll progress -->
+    <div class="particles" aria-hidden="true"></div>
+
+    <!-- The growing orange blob -->
+    <div class="studio__blob" aria-hidden="true">
+      <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet">
+        <path id="studio-blob-shape"
+          d="M 300 90
+             C 380 90, 460 120, 500 180
+             C 560 210, 560 300, 520 360
+             C 550 430, 480 500, 400 500
+             C 360 560, 240 560, 200 500
+             C 120 500, 60 430, 90 360
+             C 50 300, 50 210, 110 180
+             C 150 120, 220 90, 300 90 Z"
+          fill="url(#paintOrange)"
+          filter="url(#spray-wet)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ORANGE DIVE -->
+<section class="orange" id="about" data-parallax-section>
+  <div class="orange__glow" aria-hidden="true"></div>
+
+  <div class="orange__inner">
+    <p class="orange__kicker mono">about / 003</p>
+    <h2 class="orange__headline">
+      <span data-split>Hi,</span> <span data-split>I'm</span> <em data-split>Alec</em><span data-split>.</span>
+      <span data-split>I</span> <span data-split>design</span> <span data-split>software</span>
+      <br/>
+      <span class="orange__em">
+        <span data-split>like</span> <span data-split>a</span> <span data-split>craftsman</span> <span data-split>makes</span> <span data-split>furniture.</span>
+      </span>
+    </h2>
+
+    <div class="orange__columns">
+      <div>
+        <p class="mono">[001] taste</p>
+        <p>
+          Design is a thousand tiny choices. I treat every one of them like it matters — because it does.
+        </p>
+      </div>
+      <div>
+        <p class="mono">[002] craft</p>
+        <p>
+          I work the seam between <em>pixel</em> and <em>code</em>. Nothing leaves the studio unless I'd frame it.
+        </p>
+      </div>
+      <div>
+        <p class="mono">[003] people</p>
+        <p>
+          My family runs recovery homes. The best thing I've designed is for them. You can feel when software is drawn by someone who knows who it's for.
+        </p>
+      </div>
+    </div>
+
+    <div class="orange__row">
+      <p class="orange__stamp">dipped in · <span class="mono">#E86A2A</span></p>
+      <div class="orange__ctas">
+        <button class="btn btn--ink" data-action="scroll-to" data-target="#palette"><span>See the work</span> <i>→</i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PIXELS → PAINTINGS -->
+<section class="pixels" id="pixels">
+  <div class="pixels__sticky">
+    <div class="pixels__wall" aria-hidden="true"></div>
+
+    <canvas class="pixels__canvas" aria-hidden="true"></canvas>
+
+    <div class="pixels__frame" aria-hidden="true"></div>
+
+    <div class="pixels__caption" data-pixcap="1">
+      <p class="mono"><i class="dot"></i> 04 / philosophy</p>
+      <h3>Start with <em>pixels.</em></h3>
+    </div>
+
+    <div class="pixels__caption" data-pixcap="2">
+      <p class="mono"><i class="dot"></i> keep going</p>
+      <h3>Don't stop until it feels <em>painted.</em></h3>
+    </div>
+
+    <div class="pixels__caption" data-pixcap="3">
+      <p class="mono"><i class="dot"></i> that's the whole job</p>
+      <h3>Everything I make tries to cross that line.</h3>
+    </div>
+
+    <div class="pixels__attr mono">
+      after · la gioconda · leonardo · c.1503
+    </div>
+  </div>
+</section>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ GALLERIST (horizontal rooms) -->
+<section class="gallerist" id="gallerist">
+  <div class="gallerist__sticky">
+    <header class="gallerist__head">
+      <p class="mono">[ 06 ] the exhibition</p>
+      <p class="gallerist__hint mono">wheel → or arrow keys</p>
+    </header>
+
+    <div class="gallerist__track" id="gallerist-track" tabindex="0">
+      <!-- Rooms rendered from PROJECTS data by JS -->
+    </div>
+
+    <div class="gallerist__pager mono">
+      <span id="gallerist-cur">01</span>
+      <span class="gallerist__pager-sep">/</span>
+      <span id="gallerist-tot">04</span>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ TWO THINGS -->
+<section class="two-things" data-parallax-section>
+  <p class="mono two-things__kicker">[ 07 ] two things i care about most</p>
+  <p class="two-things__line">
+    <span class="drip-word">Design.</span>
+    <span class="amp">&amp;</span>
+    <span class="drip-word drip-word--alt">Systems.</span>
+  </p>
+  <p class="two-things__foot">Everything else follows from those.</p>
+
+  <!-- Marquee band -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>PIXEL-PERFECT</span><span class="marquee__dot">●</span>
+      <span>FRAME-RATE HONEST</span><span class="marquee__dot">●</span>
+      <span>COPY THAT DOESN'T LIE</span><span class="marquee__dot">●</span>
+      <span>ACCESSIBLE BY DEFAULT</span><span class="marquee__dot">●</span>
+      <span>DARK-MODE BORN</span><span class="marquee__dot">●</span>
+      <span>NO DEAD CLICKS</span><span class="marquee__dot">●</span>
+      <span>PIXEL-PERFECT</span><span class="marquee__dot">●</span>
+      <span>FRAME-RATE HONEST</span><span class="marquee__dot">●</span>
+      <span>COPY THAT DOESN'T LIE</span><span class="marquee__dot">●</span>
+      <span>ACCESSIBLE BY DEFAULT</span><span class="marquee__dot">●</span>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ CONTACT -->
+<section class="contact" id="contact" data-parallax-section>
+  <div class="contact__wall" data-parallax="0.4" aria-hidden="true"></div>
+
+  <div class="contact__splatter" aria-hidden="true">
+    <svg viewBox="0 0 800 620" preserveAspectRatio="xMidYMid meet">
+      <path class="splatter-path"
+        d="M 140 260 C 90 220, 70 170, 120 130 C 160 95, 230 100, 260 90
+           C 300 60, 360 55, 410 70 C 460 45, 540 55, 580 95
+           C 640 110, 700 150, 690 210 C 720 250, 710 320, 660 360
+           C 680 410, 630 470, 560 470 C 520 520, 440 530, 380 500
+           C 320 540, 220 530, 180 480 C 110 470, 70 410, 100 360
+           C 60 330, 90 280, 140 260 Z"
+        fill="url(#paintOrange)"
+        filter="url(#spray-heavy)"
+        stroke="#b84515" stroke-width="2"
+        stroke-dasharray="3200" stroke-dashoffset="3200"/>
+      <g class="droplets" filter="url(#spraypaint)">
+        <circle cx="80"  cy="100" r="6"  fill="#e86a2a"/>
+        <circle cx="710" cy="90"  r="10" fill="#e86a2a"/>
+        <circle cx="740" cy="500" r="8"  fill="#e86a2a"/>
+        <circle cx="60"  cy="480" r="14" fill="#e86a2a"/>
+        <circle cx="180" cy="40"  r="4"  fill="#e86a2a"/>
+        <circle cx="620" cy="560" r="5"  fill="#e86a2a"/>
+        <circle cx="440" cy="30"  r="3"  fill="#e86a2a"/>
+      </g>
+      <path class="drip-trail" d="M 280 470 Q 278 520 282 560 Q 286 580 280 600" stroke="#b84515" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path class="drip-trail" d="M 480 480 Q 482 540 478 600" stroke="#b84515" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path class="drip-trail" d="M 620 440 Q 622 490 618 540" stroke="#b84515" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <h2 class="contact__text">
+    <span>GET&nbsp;IN</span>
+    <span>TOUCH.</span>
+  </h2>
+
+  <div class="contact__row">
+    <!-- Spray can socials -->
+    <div class="spraycan" aria-label="Social links">
+      <div class="spraycan__nozzle">
+        <div class="spraycan__button"></div>
+        <div class="spraycan__stem"></div>
+      </div>
+      <div class="spraycan__shoulder"></div>
+      <div class="spraycan__body">
+        <div class="spraycan__label">
+          <span class="mono tiny">no.01</span>
+          <strong>ALEC/RJ</strong>
+          <span class="spraycan__stripe"></span>
+          <span class="mono tiny">#E86A2A</span>
+        </div>
+        <div class="spraycan__buttons">
+          <a href="#" class="can-btn" data-action="social" data-social="x" aria-label="X / Twitter"><span>X</span></a>
+          <a href="#" class="can-btn" data-action="social" data-social="ig" aria-label="Instagram"><span>IG</span></a>
+          <a href="#" class="can-btn" data-action="social" data-social="li" aria-label="LinkedIn"><span>LI</span></a>
+        </div>
+      </div>
+      <div class="spraycan__base"></div>
+    </div>
+
+    <!-- Contact form -->
+    <form class="contact__form" data-action="contact-submit" novalidate>
+      <p class="mono">[ say hello ]</p>
+      <label>
+        <span>Your name</span>
+        <input type="text" name="name" required placeholder="andrew" />
+      </label>
+      <label>
+        <span>Your email</span>
+        <input type="email" name="email" required placeholder="you@domain.com" />
+      </label>
+      <label>
+        <span>What can I help you build?</span>
+        <textarea name="message" rows="3" required placeholder="tell me a little about your project."></textarea>
+      </label>
+      <button class="btn btn--primary" type="submit">
+        <span>Send it</span> <i>→</i>
+      </button>
+      <p class="contact__form-status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ FOOTER -->
+<footer class="foot">
+  <div class="foot__col">
+    <p class="mono">sitemap /</p>
+    <ul>
+      <li><a href="#hero"      data-action="scroll-to" data-target="#hero">Top</a></li>
+      <li><a href="#manifesto" data-action="scroll-to" data-target="#manifesto">Manifesto</a></li>
+      <li><a href="#about"     data-action="scroll-to" data-target="#about">About</a></li>
+      <li><a href="#gallerist" data-action="scroll-to" data-target="#gallerist">Exhibition</a></li>
+      <li><a href="#contact"   data-action="scroll-to" data-target="#contact">Contact</a></li>
+    </ul>
+  </div>
+  <div class="foot__col">
+    <p class="mono">elsewhere /</p>
+    <ul>
+      <li><a href="#" data-action="social" data-social="x">X (Twitter)</a></li>
+      <li><a href="#" data-action="social" data-social="ig">Instagram</a></li>
+      <li><a href="#" data-action="social" data-social="li">LinkedIn</a></li>
+      <li><a href="mailto:hi@alecrj.com">hi@alecrj.com</a></li>
+    </ul>
+  </div>
+  <div class="foot__col foot__col--wide">
+    <p class="mono">upcoming / next drop</p>
+    <form class="foot__form" data-action="waitlist-submit" novalidate>
+      <input type="email" name="email" required placeholder="you@domain.com" aria-label="Email for waitlist" />
+      <button type="submit">Join the list →</button>
+    </form>
+    <p class="foot__form-status mono" aria-live="polite"></p>
+  </div>
+  <div class="foot__col foot__col--brand">
+    <p class="foot__brand">A/RJ</p>
+    <p class="mono tiny">© 2026 · alecrj.com</p>
+    <p class="mono tiny">built on a wall · one can at a time</p>
+  </div>
+</footer>
+
+<!-- Konami overlay -->
+<div class="konami" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="0" fill="url(#paintOrange)"/></svg></div>
+
+<script src="script.js"></script>
+</body>
+</html>
